@@ -1,7 +1,8 @@
 import numpy
 
+
 def fopdt(t, K, tau, theta=0, y0=0):
-    """ First Order Plus Dead Time response with bias
+    """First Order Plus Dead Time response with bias
 
     Step response of
                K
@@ -15,10 +16,13 @@ def fopdt(t, K, tau, theta=0, y0=0):
     :param y0: bias
     """
 
-    return y0 + numpy.sign(K)*numpy.maximum(0, abs(K)*(1 - numpy.exp(-(t - theta)/tau)))
+    return y0 + numpy.sign(K) * numpy.maximum(
+        0, abs(K) * (1 - numpy.exp(-(t - theta) / tau))
+    )
+
 
 def sopdt(t, K, tau, zeta, theta=0, y0=0):
-    """ Second Order Plus Dead Time response with bias
+    """Second Order Plus Dead Time response with bias
 
     Step response of
                         K
@@ -35,11 +39,11 @@ def sopdt(t, K, tau, zeta, theta=0, y0=0):
 
     tu = numpy.maximum(0, t - theta)  # undelayed time
 
-    ttau = tu/tau
+    ttau = tu / tau
     exp = numpy.exp
 
     if zeta == 1:
-        return y0 + K*(1 - (1 + ttau)*exp(-ttau))
+        return y0 + K * (1 - (1 + ttau) * exp(-ttau))
 
     if zeta > 1:
         coslike = numpy.cosh
@@ -50,5 +54,8 @@ def sopdt(t, K, tau, zeta, theta=0, y0=0):
         sinlike = numpy.sin
         root = numpy.sqrt(1 - zeta**2)
 
-    return y0 + K*(1 - exp(-zeta*ttau)*(coslike(root*ttau) 
-                          + zeta/root*sinlike(root*ttau)))
+    return y0 + K * (
+        1
+        - exp(-zeta * ttau)
+        * (coslike(root * ttau) + zeta / root * sinlike(root * ttau))
+    )

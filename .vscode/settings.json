@@ -9,6 +9,7 @@
         "ipywidgets",
         "loglog",
         "mathcal",
+        "mathjax",
         "Padé",
         "randn",
         "resultplot",

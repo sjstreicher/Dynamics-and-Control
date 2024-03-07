@@ -52,6 +52,15 @@ def routh(p):
         for j in range(N // 2):
             S = M[[i - 2, i - 1], [0, j + 1]]
             M[i, j] = sympy.simplify(-S.det() / M[i - 1, 0])
+        # If a row of the routh table becomes zero,Take the derivative of the previous row and substitute it instead
+        # Ref: Norman S. Nise, Control Systems Engineering, 8th Edition, Chapter 6, Section 3
+        if M[i, :] == sympy.Matrix([[0] * (M.shape[1])]):
+            # Find the coefficients on taking the derivative of the Auxiliary polynomial
+            diff_arr = list(range(N - i, -1, -2))
+            diff_arr.extend([0] * (M.shape[1] - len(diff_arr)))
+            diff_arr = sympy.Matrix([diff_arr])
+            # Multiply the coefficients with the value in previous row
+            M[i, :] = sympy.matrix_multiply_elementwise(diff_arr, M[i - 1, :])
     return M[:, :-1]
 
 
@@ -59,8 +68,8 @@ def pade(G, s, M, N, p=0):
     """Return a Padé approximation of the function G in terms of variable s, of order M/N around point p"""
     M += 1
     N += 1
-    b = sympy.symbols(f"b:{M}")
-    a = sympy.symbols(f"a:{N}")
+    b = sympy.symbols("b:{}".format(M))
+    a = sympy.symbols("a:{}".format(N))
     approximation = sum(b[i] * s**i for i in range(M)) / sum(
         a[i] * s**i for i in range(N)
     )
@@ -98,9 +107,7 @@ def sampledvalues(fz, z, N):
         N: The number of time steps to return
     """
     q = sympy.Symbol("q")
-    return sympy.poly(fz.subs(z, q**-1).series(q, 0, N).removeO(), q).all_coeffs()[
-        ::-1
-    ]
+    return sympy.poly(fz.subs(z, q**-1).series(q, 0, N).removeO(), q).all_coeffs()[::-1]
 
 
 def evaluate_at_times(expression, t, ts):

@@ -52,7 +52,7 @@ def routh(p):
         for j in range(N // 2):
             S = M[[i - 2, i - 1], [0, j + 1]]
             M[i, j] = sympy.simplify(-S.det() / M[i - 1, 0])
-        # If a row of the routh table becomes zero,Take the derivative of the previous row and substitute it instead
+        # If a row of the Routh table becomes zero, take the derivative of the previous row and substitute it instead
         # Ref: Norman S. Nise, Control Systems Engineering, 8th Edition, Chapter 6, Section 3
         if M[i, :] == sympy.Matrix([[0] * (M.shape[1])]):
             # Find the coefficients on taking the derivative of the Auxiliary polynomial
